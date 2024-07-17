@@ -93,26 +93,68 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
 
     @Override
     public DetalleFormularioDTO createDetalleFormulario(DetalleFormularioCreateUpdateDTO detalleFormularioDTO) {
+        // Convertir DTO a entidad
         FormularioEvaluacionDetalle detalle = convertToEntity(detalleFormularioDTO);
+
+        // Completar la información del formulario utilizando el servicio de formulario
+        FormularioDTO formularioDTO = formularioService.getFormularioEvaluacion(detalleFormularioDTO.getFormularioId());
+        FormularioEvaluacion formulario = convertToEntity(formularioDTO);
+        detalle.setFormulario(formulario);
+
+        // Completar la información de MatrizEvaluacion
+        WebClient webClient = webClientBuilder.build();
+        MatrizEvaluacion matriz = webClient.get()
+                .uri("http://localhost:8086/api/empresa/matrizevaluacion/find/{id}",
+                        detalleFormularioDTO.getId_matrizevaluacion())
+                .retrieve()
+                .bodyToMono(MatrizEvaluacion.class)
+                .block();
+        detalle.setMatrizEvaluacion(matriz);
+
+        // Setear el ID de la matriz de evaluación en el detalle
+        detalle.setId_matrizevaluacion(matriz.getId());
+
+        // Guardar el detalle en la base de datos
         FormularioEvaluacionDetalle savedDetalle = detalleFormularioRepository.save(detalle);
+
+        // Convertir la entidad guardada a DTO y devolverla
         return convertToDTO(savedDetalle);
     }
 
     @Override
-    public DetalleFormularioDTO updateDetalleFormulario(Long id, DetalleFormularioCreateUpdateDTO detalleFormularioDTO) {
+    public DetalleFormularioDTO updateDetalleFormulario(Long id,
+            DetalleFormularioCreateUpdateDTO detalleFormularioDTO) {
         Optional<FormularioEvaluacionDetalle> detalleOpt = detalleFormularioRepository.findById(id);
         if (detalleOpt.isPresent()) {
             FormularioEvaluacionDetalle detalle = detalleOpt.get();
             detalle.setCumplimiento(detalleFormularioDTO.getCumplimiento());
             detalle.setObservacion(detalleFormularioDTO.getObservacion());
 
-            Optional<EstadoDetalle> estadoOpt = estadoDetalleRepository.findById(detalleFormularioDTO.getEstadoDetalleId());
+            Optional<EstadoDetalle> estadoOpt = estadoDetalleRepository
+                    .findById(detalleFormularioDTO.getEstadoDetalleId());
             estadoOpt.ifPresent(detalle::setEstadoDetalle);
 
             Optional<Documento> documentoOpt = documentoRepository.findById(detalleFormularioDTO.getDocumentoId());
             documentoOpt.ifPresent(detalle::setDocumento);
 
-            detalle.setId_matrizevaluacion(detalleFormularioDTO.getId_matrizevaluacion()); // Setear el ID de la matriz de evaluación
+            detalle.setId_matrizevaluacion(detalleFormularioDTO.getId_matrizevaluacion()); // Setear el ID de la matriz
+                                                                                           // de evaluación
+
+            // Completar la información de MatrizEvaluacion
+            WebClient webClient = webClientBuilder.build();
+            MatrizEvaluacion matriz = webClient.get()
+                    .uri("http://localhost:8086/api/empresa/matrizevaluacion/find/{id}",
+                            detalleFormularioDTO.getId_matrizevaluacion())
+                    .retrieve()
+                    .bodyToMono(MatrizEvaluacion.class)
+                    .block();
+            detalle.setMatrizEvaluacion(matriz);
+
+            // Completar la información del formulario utilizando el servicio de formulario
+            FormularioDTO formularioDTO = formularioService
+                    .getFormularioEvaluacion(detalleFormularioDTO.getFormularioId());
+            FormularioEvaluacion formulario = convertToEntity(formularioDTO);
+            detalle.setFormulario(formulario);
 
             FormularioEvaluacionDetalle updatedDetalle = detalleFormularioRepository.save(detalle);
             return convertToDTO(updatedDetalle);
