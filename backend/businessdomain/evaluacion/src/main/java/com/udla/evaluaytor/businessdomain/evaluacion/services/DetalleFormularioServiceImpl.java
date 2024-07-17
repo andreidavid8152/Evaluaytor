@@ -177,7 +177,7 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
             EstadoDetalleDTO estadoDTO = new EstadoDetalleDTO();
             estadoDTO.setId(detalle.getEstadoDetalle().getId());
             estadoDTO.setNombre(detalle.getEstadoDetalle().getNombre());
-            dto.setEstadoDetalleDTO(estadoDTO);
+            dto.setEstadoDetalle(estadoDTO);
         }
 
         if (detalle.getDocumento() != null) {
@@ -185,7 +185,7 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
             documentoDTO.setId(detalle.getDocumento().getId());
             documentoDTO.setNombre(detalle.getDocumento().getNombre());
             documentoDTO.setPath(detalle.getDocumento().getPath());
-            dto.setDocumentoDTO(documentoDTO);
+            dto.setDocumento(documentoDTO);
         }
 
         if (detalle.getFormulario() != null) {
@@ -199,7 +199,7 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
                 EstadoFormularioDTO estadoFormularioDTO = new EstadoFormularioDTO();
                 estadoFormularioDTO.setId(detalle.getFormulario().getEstadoFormulario().getId());
                 estadoFormularioDTO.setNombre(detalle.getFormulario().getEstadoFormulario().getNombre());
-                formularioDTO.setEstadoFormularioDTO(estadoFormularioDTO);
+                formularioDTO.setEstadoFormulario(estadoFormularioDTO);
             }
 
             if (detalle.getFormulario().getCategoria() != null) {
@@ -227,7 +227,7 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
                 formularioDTO.setProveedor(proveedor);
             }
 
-            dto.setFormularioDTO(formularioDTO);
+            //dto.setFormulario(formularioDTO);
         }
 
         if (detalle.getMatrizEvaluacion() != null) {
@@ -288,10 +288,10 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
         formulario.setNumero(dto.getNumero());
         formulario.setEvaluacion(dto.getEvaluacion());
 
-        if (dto.getEstadoFormularioDTO() != null) {
+        if (dto.getEstadoFormulario() != null) {
             EstadoFormulario estadoFormulario = new EstadoFormulario();
-            estadoFormulario.setId(dto.getEstadoFormularioDTO().getId());
-            estadoFormulario.setNombre(dto.getEstadoFormularioDTO().getNombre());
+            estadoFormulario.setId(dto.getEstadoFormulario().getId());
+            estadoFormulario.setNombre(dto.getEstadoFormulario().getNombre());
             formulario.setEstadoFormulario(estadoFormulario);
         }
 

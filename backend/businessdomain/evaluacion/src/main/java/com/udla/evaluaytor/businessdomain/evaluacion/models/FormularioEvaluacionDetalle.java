@@ -1,8 +1,5 @@
 package com.udla.evaluaytor.businessdomain.evaluacion.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,8 +29,6 @@ public class FormularioEvaluacionDetalle {
 
     @ManyToOne
     @JoinColumn(name = "id_formulario")
-    //@JsonBackReference
-    //@JsonIgnore
     private FormularioEvaluacion formulario;  
 
     private Long id_matrizevaluacion;

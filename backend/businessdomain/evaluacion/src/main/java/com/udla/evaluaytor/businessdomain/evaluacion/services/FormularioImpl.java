@@ -9,12 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.udla.evaluaytor.businessdomain.evaluacion.dto.DetalleFormularioDTO;
+import com.udla.evaluaytor.businessdomain.evaluacion.dto.DocumentoDTO;
+import com.udla.evaluaytor.businessdomain.evaluacion.dto.EstadoDetalleDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.dto.EstadoFormularioDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.dto.FormularioCreateUpdateDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.dto.FormularioDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.Categoria;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.EstadoFormulario;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.FormularioEvaluacion;
+import com.udla.evaluaytor.businessdomain.evaluacion.models.FormularioEvaluacionDetalle;
+import com.udla.evaluaytor.businessdomain.evaluacion.models.MatrizEvaluacion;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.Perito;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.Proveedor;
 import com.udla.evaluaytor.businessdomain.evaluacion.repositories.EstadoFormularioRepository;
@@ -72,6 +77,18 @@ public class FormularioImpl implements FormularioService {
                 .bodyToMono(Perito.class)
                 .block();
         formulario.setPerito(perito);
+
+        // Completar los detalles del formulario con información de la matriz de
+        // evaluación
+        formulario.getDetallesFormulario().forEach(detalle -> {
+            Long matrizEvaluacionId = detalle.getId_matrizevaluacion();
+            MatrizEvaluacion matriz = webClient.get()
+                    .uri("http://localhost:8081/api/empresa/matrizevaluacion/findbyid/{id}", matrizEvaluacionId)
+                    .retrieve()
+                    .bodyToMono(MatrizEvaluacion.class)
+                    .block();
+            detalle.setMatrizEvaluacion(matriz);
+        });
 
         return formulario;
     }
@@ -157,15 +174,15 @@ public class FormularioImpl implements FormularioService {
             EstadoFormularioDTO estadoDTO = new EstadoFormularioDTO();
             estadoDTO.setId(formulario.getEstadoFormulario().getId());
             estadoDTO.setNombre(formulario.getEstadoFormulario().getNombre());
-            dto.setEstadoFormularioDTO(estadoDTO);
+            dto.setEstadoFormulario(estadoDTO);
         }
 
         if (formulario.getProveedor() != null) {
             Proveedor proveedorDTO = new Proveedor();
             proveedorDTO.setId(formulario.getProveedor().getId());
             proveedorDTO.setNombre(formulario.getProveedor().getNombre());
-            proveedorDTO.setTelefono(formulario.getPerito().getTelefono());
-            proveedorDTO.setDireccion(formulario.getPerito().getDireccion());
+            proveedorDTO.setTelefono(formulario.getProveedor().getTelefono());
+            proveedorDTO.setDireccion(formulario.getProveedor().getDireccion());
             dto.setProveedor(proveedorDTO);
         }
 
@@ -183,6 +200,46 @@ public class FormularioImpl implements FormularioService {
             categoriaDTO.setId(formulario.getCategoria().getId());
             categoriaDTO.setDescripcion(formulario.getCategoria().getDescripcion());
             dto.setCategoria(categoriaDTO);
+        }
+
+        if (formulario.getDetallesFormulario() != null) {
+            List<DetalleFormularioDTO> detallesDTO = formulario.getDetallesFormulario().stream()
+                    .map(this::convertDetalleToDTO)
+                    .collect(Collectors.toList());
+            dto.setDetallesFormulario(detallesDTO);
+        }
+
+        return dto;
+    }
+
+    private DetalleFormularioDTO convertDetalleToDTO(FormularioEvaluacionDetalle detalle) {
+        DetalleFormularioDTO dto = new DetalleFormularioDTO();
+        dto.setId(detalle.getId());
+        dto.setCumplimiento(detalle.getCumplimiento());
+        dto.setObservacion(detalle.getObservacion());
+
+        if (detalle.getEstadoDetalle() != null) {
+            EstadoDetalleDTO estadoDTO = new EstadoDetalleDTO();
+            estadoDTO.setId(detalle.getEstadoDetalle().getId());
+            estadoDTO.setNombre(detalle.getEstadoDetalle().getNombre());
+            dto.setEstadoDetalle(estadoDTO);
+        }
+
+        if (detalle.getDocumento() != null) {
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.setId(detalle.getDocumento().getId());
+            documentoDTO.setNombre(detalle.getDocumento().getNombre());
+            documentoDTO.setPath(detalle.getDocumento().getPath());
+            dto.setDocumento(documentoDTO);
+        }
+
+        if (detalle.getMatrizEvaluacion() != null) {
+            MatrizEvaluacion matrizDTO = new MatrizEvaluacion();
+            matrizDTO.setId(detalle.getMatrizEvaluacion().getId());
+            matrizDTO.setPregunta(detalle.getMatrizEvaluacion().getPregunta());
+            matrizDTO.setPuntos(detalle.getMatrizEvaluacion().getPuntos());
+            matrizDTO.setRequiereDocumento(detalle.getMatrizEvaluacion().getRequiereDocumento());
+            dto.setMatrizEvaluacion(matrizDTO);
         }
 
         return dto;

@@ -11,14 +11,7 @@ import lombok.Data;
 @Entity
 @Data
 public class EstadoFormulario {
-    /*@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(name = "nombre", nullable = false)
-    private String nombre;*/ //estaba puesto, es del profe
-
-    //lo nuestro es lo siguiente
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

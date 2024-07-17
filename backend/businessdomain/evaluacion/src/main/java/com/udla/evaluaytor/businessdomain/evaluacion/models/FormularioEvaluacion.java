@@ -16,22 +16,21 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Transient;
 import lombok.Data;
 
-
 @Entity
 @Data
 public class FormularioEvaluacion {
-@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Date fecha;
-    private String numero; 
+    private String numero;
     private int evaluacion;
 
-     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_estado", nullable = false) // Especifica el nombre de la columna de la FK
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_estado", nullable = false)
     private EstadoFormulario estadoFormulario;
-    
+
     @OneToMany(mappedBy = "formulario")
     @JsonManagedReference
     private List<FormularioEvaluacionDetalle> detallesFormulario;
@@ -49,6 +48,4 @@ public class FormularioEvaluacion {
     @Transient
     private Categoria categoria;
 
-
 }
-
