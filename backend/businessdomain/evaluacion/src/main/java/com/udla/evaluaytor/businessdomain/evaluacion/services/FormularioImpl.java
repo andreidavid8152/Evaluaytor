@@ -51,7 +51,7 @@ public class FormularioImpl implements FormularioService {
 
         // Llamada a microservicio para obtener Proveedor
         Proveedor proveedor = webClient.get()
-                .uri("http://localhost:8086/api/empresa/proveedor/findbyid/{id}", proveedorId)
+                .uri("http://localhost:8081/api/empresa/proveedor/findbyid/{id}", proveedorId)
                 .retrieve()
                 .bodyToMono(Proveedor.class)
                 .block();
@@ -59,7 +59,7 @@ public class FormularioImpl implements FormularioService {
 
         // Llamada a microservicio para obtener Categoria
         Categoria categoria = webClient.get()
-                .uri("http://localhost:8086/api/empresa/categoria/find/{id}", categoriaId)
+                .uri("http://localhost:8081/api/empresa/categoria/findbyid/{id}", categoriaId)
                 .retrieve()
                 .bodyToMono(Categoria.class)
                 .block();
@@ -67,7 +67,7 @@ public class FormularioImpl implements FormularioService {
 
         // Llamada a microservicio para obtener Perito
         Perito perito = webClient.get()
-                .uri("http://localhost:8086/api/empresa/perito/findbyid/{id}", peritoId)
+                .uri("http://localhost:8081/api/empresa/perito/findbyid/{id}", peritoId)
                 .retrieve()
                 .bodyToMono(Perito.class)
                 .block();
@@ -220,21 +220,21 @@ public class FormularioImpl implements FormularioService {
         // Llama al microservicio de proveedor para obtener la información del proveedor
         WebClient webClient = webClientBuilder.build();
         Mono<Proveedor> proveedorMono = webClient.get()
-                .uri("http://localhost:8086/api/empresa/proveedor/findbyid/{id}", proveedorId)
+                .uri("http://localhost:8081/api/empresa/proveedor/findbyid/{id}", proveedorId)
                 .retrieve()
                 .bodyToMono(Proveedor.class);
         Proveedor proveedor = proveedorMono.block();
         formularioEvaluacion.setProveedor(proveedor);
 
         Mono<Categoria> categoriaMono = webClient.get()
-                .uri("http://localhost:8086/api/empresa/categoria/find/{id}", categoriaId)
+                .uri("http://localhost:8081/api/empresa/categoria/findbyid/{id}", categoriaId)
                 .retrieve()
                 .bodyToMono(Categoria.class);
         Categoria categoria = categoriaMono.block();
         formularioEvaluacion.setCategoria(categoria);
 
         Mono<Perito> peritoMono = webClient.get()
-                .uri("http://localhost:8086/api/empresa/perito/findbyid/{id}", peritoId)
+                .uri("http://localhost:8081/api/empresa/perito/findbyid/{id}", peritoId)
                 .retrieve()
                 .bodyToMono(Perito.class);
         Perito perito = peritoMono.block();

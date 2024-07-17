@@ -38,12 +38,12 @@ public class EvaluacionController {
 
     //FORMULARIO
 
-    @GetMapping("/formulario/findall")
+    @GetMapping("/findall")
     public List<FormularioDTO> getAllFormularios() {
         return formularioService.getAllFormularios();
     }
 
-    @GetMapping("/formulario/find/{id}")
+    @GetMapping("/findbyid/{id}")
     public ResponseEntity<FormularioDTO> getFormularioById(@PathVariable Long id) {
         FormularioDTO formulario = formularioService.getFormularioById(id);
         if (formulario != null) {
@@ -53,13 +53,13 @@ public class EvaluacionController {
         }
     }
 
-    @PostMapping("/formulario/create")
+    @PostMapping("/save")
     public ResponseEntity<FormularioDTO> createFormulario(@RequestBody FormularioCreateUpdateDTO formularioDTO) {
         FormularioDTO createdFormulario = formularioService.createFormulario(formularioDTO);
         return ResponseEntity.ok(createdFormulario);
     }
 
-    @PutMapping("/formulario/update/{id}")
+    @PutMapping("/updatebyid/{id}")
     public ResponseEntity<FormularioDTO> updateFormulario(@PathVariable Long id, @RequestBody FormularioCreateUpdateDTO formularioDTO) {
         FormularioDTO updatedFormulario = formularioService.updateFormulario(id, formularioDTO);
         if (updatedFormulario != null) {
@@ -69,7 +69,7 @@ public class EvaluacionController {
         }
     }
 
-    @DeleteMapping("/formulario/delete/{id}")
+    @DeleteMapping("/deletebyid/{id}")
     public ResponseEntity<Void> deleteFormulario(@PathVariable Long id) {
         formularioService.deleteFormulario(id);
         return ResponseEntity.noContent().build();
@@ -80,12 +80,12 @@ public class EvaluacionController {
     @Autowired
     private EstadoFormularioService estadoFormularioService;
 
-    @GetMapping("/estadoformulario/findall")
+    @GetMapping("/estadoevaluacion/findall")
     public List<EstadoFormularioDTO> getAllEstadosFormulario() {
         return estadoFormularioService.getAllEstadosFormulario();
     }
 
-    @GetMapping("/estadoformulario/find/{id}")
+    @GetMapping("/estadoevaluacion/findbyid/{id}")
     public ResponseEntity<EstadoFormularioDTO> getEstadoFormularioById(@PathVariable Long id) {
         EstadoFormularioDTO estado = estadoFormularioService.getEstadoFormularioById(id);
         if (estado != null) {
@@ -95,13 +95,13 @@ public class EvaluacionController {
         }
     }
 
-    @PostMapping("/estadoformulario/create")
+    @PostMapping("/estadoevaluacion/save")
     public ResponseEntity<EstadoFormularioDTO> createEstadoFormulario(@RequestBody EstadoFormularioDTO estadoFormularioDTO) {
         EstadoFormularioDTO createdEstado = estadoFormularioService.createEstadoFormulario(estadoFormularioDTO);
         return ResponseEntity.ok(createdEstado);
     }
 
-    @PutMapping("/estadoformulario/update/{id}")
+    @PutMapping("/estadoevaluacion/updatebyid/{id}")
     public ResponseEntity<EstadoFormularioDTO> updateEstadoFormulario(@PathVariable Long id, @RequestBody EstadoFormularioDTO estadoFormularioDTO) {
         EstadoFormularioDTO updatedEstado = estadoFormularioService.updateEstadoFormulario(id, estadoFormularioDTO);
         if (updatedEstado != null) {
@@ -111,7 +111,7 @@ public class EvaluacionController {
         }
     }
 
-    @DeleteMapping("/estadoformulario/delete/{id}")
+    @DeleteMapping("/estadoevaluacion/deletebyid/{id}")
     public ResponseEntity<Void> deleteEstadoFormulario(@PathVariable Long id) {
         estadoFormularioService.deleteEstadoFormulario(id);
         return ResponseEntity.noContent().build();
@@ -126,7 +126,7 @@ public class EvaluacionController {
         return detalleFormularioService.getAllDetallesFormulario();
     }
 
-    @GetMapping("/detalleformulario/find/{id}")
+    @GetMapping("/detalleformulario/findbyid/{id}")
     public ResponseEntity<DetalleFormularioDTO> getDetalleFormularioById(@PathVariable Long id) {
         DetalleFormularioDTO detalle = detalleFormularioService.getDetalleFormularioById(id);
         if (detalle != null) {
@@ -136,13 +136,13 @@ public class EvaluacionController {
         }
     }
 
-    @PostMapping("/detalleformulario/create")
+    @PostMapping("/detalleformulario/save")
     public ResponseEntity<DetalleFormularioDTO> createDetalleFormulario(@RequestBody DetalleFormularioCreateUpdateDTO detalleFormularioDTO) {
         DetalleFormularioDTO createdDetalle = detalleFormularioService.createDetalleFormulario(detalleFormularioDTO);
         return ResponseEntity.ok(createdDetalle);
     }
 
-    @PutMapping("/detalleformulario/update/{id}")
+    @PutMapping("/detalleformulario/updatebyid/{id}")
     public ResponseEntity<DetalleFormularioDTO> updateDetalleFormulario(@PathVariable Long id, @RequestBody DetalleFormularioCreateUpdateDTO detalleFormularioDTO) {
         DetalleFormularioDTO updatedDetalle = detalleFormularioService.updateDetalleFormulario(id, detalleFormularioDTO);
         if (updatedDetalle != null) {
@@ -152,7 +152,7 @@ public class EvaluacionController {
         }
     }
 
-    @DeleteMapping("/detalleformulario/delete/{id}")
+    @DeleteMapping("/detalleformulario/deletebyid/{id}")
     public ResponseEntity<Void> deleteDetalleFormulario(@PathVariable Long id) {
         detalleFormularioService.deleteDetalleFormulario(id);
         return ResponseEntity.noContent().build();
@@ -167,7 +167,7 @@ public class EvaluacionController {
         return estadoDetalleService.getAllEstadosDetalle();
     }
 
-    @GetMapping("/estadodetalle/find/{id}")
+    @GetMapping("/estadodetalle/findbyid/{id}")
     public ResponseEntity<EstadoDetalleDTO> getEstadoDetalleById(@PathVariable Long id) {
         EstadoDetalleDTO estado = estadoDetalleService.getEstadoDetalleById(id);
         if (estado != null) {
@@ -177,13 +177,13 @@ public class EvaluacionController {
         }
     }
 
-    @PostMapping("/estadodetalle/create")
+    @PostMapping("/estadodetalle/save")
     public ResponseEntity<EstadoDetalleDTO> createEstadoDetalle(@RequestBody EstadoDetalleDTO estadoDetalleDTO) {
         EstadoDetalleDTO createdEstado = estadoDetalleService.createEstadoDetalle(estadoDetalleDTO);
         return ResponseEntity.ok(createdEstado);
     }
 
-    @PutMapping("/estadodetalle/update/{id}")
+    @PutMapping("/estadodetalle/updatebyid/{id}")
     public ResponseEntity<EstadoDetalleDTO> updateEstadoDetalle(@PathVariable Long id, @RequestBody EstadoDetalleDTO estadoDetalleDTO) {
         EstadoDetalleDTO updatedEstado = estadoDetalleService.updateEstadoDetalle(id, estadoDetalleDTO);
         if (updatedEstado != null) {
@@ -193,7 +193,7 @@ public class EvaluacionController {
         }
     }
 
-    @DeleteMapping("/estadodetalle/delete/{id}")
+    @DeleteMapping("/estadodetalle/deletebyid/{id}")
     public ResponseEntity<Void> deleteEstadoDetalle(@PathVariable Long id) {
         estadoDetalleService.deleteEstadoDetalle(id);
         return ResponseEntity.noContent().build();
@@ -210,7 +210,7 @@ public class EvaluacionController {
         return documentoService.getAllDocumentos();
     }
 
-    @GetMapping("/documento/find/{id}")
+    @GetMapping("/documento/findbyid/{id}")
     public ResponseEntity<DocumentoDTO> getDocumentoById(@PathVariable Long id) {
         DocumentoDTO documento = documentoService.getDocumentoById(id);
         if (documento != null) {
@@ -220,13 +220,13 @@ public class EvaluacionController {
         }
     }
 
-    @PostMapping("/documento/create")
+    @PostMapping("/documento/save")
     public ResponseEntity<DocumentoDTO> createDocumento(@RequestBody DocumentoDTO documentoDTO) {
         DocumentoDTO createdDocumento = documentoService.createDocumento(documentoDTO);
         return ResponseEntity.ok(createdDocumento);
     }
 
-    @PutMapping("/documento/update/{id}")
+    @PutMapping("/documento/updatebyid/{id}")
     public ResponseEntity<DocumentoDTO> updateDocumento(@PathVariable Long id, @RequestBody DocumentoDTO documentoDTO) {
         DocumentoDTO updatedDocumento = documentoService.updateDocumento(id, documentoDTO);
         if (updatedDocumento != null) {
@@ -236,7 +236,7 @@ public class EvaluacionController {
         }
     }
 
-    @DeleteMapping("/documento/delete/{id}")
+    @DeleteMapping("/documento/deletebyid/{id}")
     public ResponseEntity<Void> deleteDocumento(@PathVariable Long id) {
         documentoService.deleteDocumento(id);
         return ResponseEntity.noContent().build();

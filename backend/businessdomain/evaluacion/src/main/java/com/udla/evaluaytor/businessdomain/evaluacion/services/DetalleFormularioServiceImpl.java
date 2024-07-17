@@ -63,7 +63,7 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
 
         // Llamada a microservicio para obtener MatrizEvaluacion
         MatrizEvaluacion matriz = webClient.get()
-            .uri("http://localhost:8086/api/empresa/matrizevaluacion/find/{id}", matrizEvaluacionId)
+            .uri("http://localhost:8081/api/empresa/matrizevaluacion/findbyid/{id}", matrizEvaluacionId)
             .retrieve()
             .bodyToMono(MatrizEvaluacion.class)
             .block();
@@ -104,7 +104,7 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
         // Completar la información de MatrizEvaluacion
         WebClient webClient = webClientBuilder.build();
         MatrizEvaluacion matriz = webClient.get()
-                .uri("http://localhost:8086/api/empresa/matrizevaluacion/find/{id}",
+                .uri("http://localhost:8081/api/empresa/matrizevaluacion/findbyid/{id}",
                         detalleFormularioDTO.getId_matrizevaluacion())
                 .retrieve()
                 .bodyToMono(MatrizEvaluacion.class)
@@ -143,7 +143,7 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
             // Completar la información de MatrizEvaluacion
             WebClient webClient = webClientBuilder.build();
             MatrizEvaluacion matriz = webClient.get()
-                    .uri("http://localhost:8086/api/empresa/matrizevaluacion/find/{id}",
+                    .uri("http://localhost:8081/api/empresa/matrizevaluacion/findbyid/{id}",
                             detalleFormularioDTO.getId_matrizevaluacion())
                     .retrieve()
                     .bodyToMono(MatrizEvaluacion.class)
@@ -268,7 +268,7 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
 
         WebClient webClient = webClientBuilder.build();
         Mono<MatrizEvaluacion> matrizMono = webClient.get()
-            .uri("http://localhost:8086/api/empresa/matrizevaluacion/find/{id}", matrizEvaluacion)
+            .uri("http://localhost:8081/api/empresa/matrizevaluacion/findbyid/{id}", matrizEvaluacion)
             .retrieve()
             .bodyToMono(MatrizEvaluacion.class);
         MatrizEvaluacion matriz = matrizMono.block();
