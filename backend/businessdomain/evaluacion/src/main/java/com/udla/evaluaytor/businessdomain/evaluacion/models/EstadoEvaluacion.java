@@ -11,13 +11,13 @@ import lombok.Data;
 
 @Entity
 @Data
-public class EstadoFormulario {
+public class EstadoEvaluacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
 
-    @OneToMany(mappedBy = "estadoFormulario")
+    @OneToMany(mappedBy = "estadoEvaluacion")
     private List<FormularioEvaluacion> formularios;
 }

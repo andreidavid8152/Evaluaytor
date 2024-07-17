@@ -9,7 +9,7 @@ public class FormularioCreateUpdateDTO {
     private Date fecha;
     private String numero; 
     private int evaluacion;
-    private Long estadoFormularioId;
+    private Long estadoEvaluacionId;
     private Long proveedorId;
     private Long categoridaId;
     private Long peritoId;

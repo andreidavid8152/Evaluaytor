@@ -13,13 +13,13 @@ import com.udla.evaluaytor.businessdomain.evaluacion.dto.DetalleFormularioCreate
 import com.udla.evaluaytor.businessdomain.evaluacion.dto.DetalleFormularioDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.dto.DocumentoDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.dto.EstadoDetalleDTO;
-import com.udla.evaluaytor.businessdomain.evaluacion.dto.EstadoFormularioDTO;
+import com.udla.evaluaytor.businessdomain.evaluacion.dto.EstadoEvaluacionDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.dto.FormularioCreateUpdateDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.dto.FormularioDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.Categoria;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.Documento;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.EstadoDetalle;
-import com.udla.evaluaytor.businessdomain.evaluacion.models.EstadoFormulario;
+import com.udla.evaluaytor.businessdomain.evaluacion.models.EstadoEvaluacion;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.FormularioEvaluacion;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.FormularioEvaluacionDetalle;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.MatrizEvaluacion;
@@ -28,7 +28,7 @@ import com.udla.evaluaytor.businessdomain.evaluacion.models.Proveedor;
 import com.udla.evaluaytor.businessdomain.evaluacion.repositories.DetalleFormularioRepository;
 import com.udla.evaluaytor.businessdomain.evaluacion.repositories.DocumentoRepository;
 import com.udla.evaluaytor.businessdomain.evaluacion.repositories.EstadoDetalleRepository;
-import com.udla.evaluaytor.businessdomain.evaluacion.repositories.EstadoFormularioRepository;
+import com.udla.evaluaytor.businessdomain.evaluacion.repositories.EstadoEvaluacionRepository;
 import com.udla.evaluaytor.businessdomain.evaluacion.repositories.FormularioRepository;
 
 import reactor.core.publisher.Mono;
@@ -43,7 +43,7 @@ public class FormularioImpl implements FormularioService {
     private FormularioRepository formularioRepository;
 
     @Autowired
-    private EstadoFormularioRepository estadoFormularioRepository;
+    private EstadoEvaluacionRepository estadoEvaluacionRepository;
 
     @Autowired
     private DetalleFormularioRepository detalleFormularioRepository;
@@ -152,9 +152,9 @@ public class FormularioImpl implements FormularioService {
         formulario.setNumero(formularioDTO.getNumero());
         formulario.setEvaluacion(formularioDTO.getEvaluacion());
 
-        EstadoFormulario estadoFormulario = estadoFormularioRepository.findById(formularioDTO.getEstadoFormularioId())
-                .orElseThrow(() -> new RuntimeException("EstadoFormulario no encontrado"));
-        formulario.setEstadoFormulario(estadoFormulario);
+        EstadoEvaluacion estadoEvaluacion = estadoEvaluacionRepository.findById(formularioDTO.getEstadoEvaluacionId())
+                .orElseThrow(() -> new RuntimeException("EstadoEvaluacion no encontrado"));
+        formulario.setEstadoEvaluacion(estadoEvaluacion);
 
         formulario.setId_perito(formularioDTO.getPeritoId());
         formulario.setId_proveedor(formularioDTO.getProveedorId());
@@ -214,11 +214,11 @@ public class FormularioImpl implements FormularioService {
         dto.setNumero(formulario.getNumero());
         dto.setEvaluacion(formulario.getEvaluacion());
 
-        if (formulario.getEstadoFormulario() != null) {
-            EstadoFormularioDTO estadoDTO = new EstadoFormularioDTO();
-            estadoDTO.setId(formulario.getEstadoFormulario().getId());
-            estadoDTO.setNombre(formulario.getEstadoFormulario().getNombre());
-            dto.setEstadoFormulario(estadoDTO);
+        if (formulario.getEstadoEvaluacion() != null) {
+            EstadoEvaluacionDTO estadoDTO = new EstadoEvaluacionDTO();
+            estadoDTO.setId(formulario.getEstadoEvaluacion().getId());
+            estadoDTO.setNombre(formulario.getEstadoEvaluacion().getNombre());
+            dto.setEstadoEvaluacion(estadoDTO);
         }
 
         if (formulario.getProveedor() != null) {
@@ -295,9 +295,9 @@ public class FormularioImpl implements FormularioService {
         formulario.setNumero(dto.getNumero());
         formulario.setEvaluacion(dto.getEvaluacion());
 
-        EstadoFormulario estadoFormulario = estadoFormularioRepository.findById(dto.getEstadoFormularioId())
-                .orElseThrow(() -> new RuntimeException("EstadoFormulario no encontrado"));
-        formulario.setEstadoFormulario(estadoFormulario);
+        EstadoEvaluacion estadoEvaluacion = estadoEvaluacionRepository.findById(dto.getEstadoEvaluacionId())
+                .orElseThrow(() -> new RuntimeException("EstadoEvaluacion no encontrado"));
+        formulario.setEstadoEvaluacion(estadoEvaluacion);
 
         formulario.setId_perito(dto.getPeritoId());
         formulario.setId_proveedor(dto.getProveedorId());

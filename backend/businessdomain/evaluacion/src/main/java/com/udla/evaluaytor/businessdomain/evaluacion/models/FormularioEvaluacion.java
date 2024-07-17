@@ -30,7 +30,7 @@ public class FormularioEvaluacion {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_estado", nullable = false)
-    private EstadoFormulario estadoFormulario;
+    private EstadoEvaluacion estadoEvaluacion;
 
     @OneToMany(mappedBy = "formulario")
     @JsonManagedReference

@@ -16,7 +16,7 @@ public class FormularioDTO {
     private Date fecha;
     private String numero;
     private int evaluacion;
-    private EstadoFormularioDTO estadoFormulario;
+    private EstadoEvaluacionDTO estadoEvaluacion;
     private Proveedor proveedor;
     private Perito perito;
     private Categoria categoria;

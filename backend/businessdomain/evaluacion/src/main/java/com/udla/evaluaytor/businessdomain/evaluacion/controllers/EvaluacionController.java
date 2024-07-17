@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.udla.evaluaytor.businessdomain.evaluacion.dto.EstadoDetalleDTO;
-import com.udla.evaluaytor.businessdomain.evaluacion.dto.EstadoFormularioDTO;
+import com.udla.evaluaytor.businessdomain.evaluacion.dto.EstadoEvaluacionDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.dto.FormularioCreateUpdateDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.dto.FormularioDTO;
 
 import com.udla.evaluaytor.businessdomain.evaluacion.services.EstadoDetalleService;
-import com.udla.evaluaytor.businessdomain.evaluacion.services.EstadoFormularioService;
+import com.udla.evaluaytor.businessdomain.evaluacion.services.EstadoEvaluacionService;
 import com.udla.evaluaytor.businessdomain.evaluacion.services.FormularioService;
 
 @RestController
@@ -70,16 +70,16 @@ public class EvaluacionController {
 
     // ESTADO EVALUACION
     @Autowired
-    private EstadoFormularioService estadoFormularioService;
+    private EstadoEvaluacionService estadoEvaluacionService;
 
     @GetMapping("/estadoevaluacion/findall")
-    public List<EstadoFormularioDTO> getAllEstadosFormulario() {
-        return estadoFormularioService.getAllEstadosFormulario();
+    public List<EstadoEvaluacionDTO> getAllEstadosFormulario() {
+        return estadoEvaluacionService.getAllEstadosFormulario();
     }
 
     @GetMapping("/estadoevaluacion/findbyid/{id}")
-    public ResponseEntity<EstadoFormularioDTO> getEstadoFormularioById(@PathVariable Long id) {
-        EstadoFormularioDTO estado = estadoFormularioService.getEstadoFormularioById(id);
+    public ResponseEntity<EstadoEvaluacionDTO> getEstadoEvaluacionById(@PathVariable Long id) {
+        EstadoEvaluacionDTO estado = estadoEvaluacionService.getEstadoEvaluacionById(id);
         if (estado != null) {
             return ResponseEntity.ok(estado);
         } else {
@@ -88,16 +88,16 @@ public class EvaluacionController {
     }
 
     @PostMapping("/estadoevaluacion/save")
-    public ResponseEntity<EstadoFormularioDTO> createEstadoFormulario(
-            @RequestBody EstadoFormularioDTO estadoFormularioDTO) {
-        EstadoFormularioDTO createdEstado = estadoFormularioService.createEstadoFormulario(estadoFormularioDTO);
+    public ResponseEntity<EstadoEvaluacionDTO> createEstadoEvaluacion(
+            @RequestBody EstadoEvaluacionDTO estadoEvaluacionDTO) {
+        EstadoEvaluacionDTO createdEstado = estadoEvaluacionService.createEstadoEvaluacion(estadoEvaluacionDTO);
         return ResponseEntity.ok(createdEstado);
     }
 
     @PutMapping("/estadoevaluacion/updatebyid/{id}")
-    public ResponseEntity<EstadoFormularioDTO> updateEstadoFormulario(@PathVariable Long id,
-            @RequestBody EstadoFormularioDTO estadoFormularioDTO) {
-        EstadoFormularioDTO updatedEstado = estadoFormularioService.updateEstadoFormulario(id, estadoFormularioDTO);
+    public ResponseEntity<EstadoEvaluacionDTO> updateEstadoEvaluacion(@PathVariable Long id,
+            @RequestBody EstadoEvaluacionDTO estadoEvaluacionDTO) {
+        EstadoEvaluacionDTO updatedEstado = estadoEvaluacionService.updateEstadoEvaluacion(id, estadoEvaluacionDTO);
         if (updatedEstado != null) {
             return ResponseEntity.ok(updatedEstado);
         } else {
@@ -106,8 +106,8 @@ public class EvaluacionController {
     }
 
     @DeleteMapping("/estadoevaluacion/deletebyid/{id}")
-    public ResponseEntity<Void> deleteEstadoFormulario(@PathVariable Long id) {
-        estadoFormularioService.deleteEstadoFormulario(id);
+    public ResponseEntity<Void> deleteEstadoEvaluacion(@PathVariable Long id) {
+        estadoEvaluacionService.deleteEstadoEvaluacion(id);
         return ResponseEntity.noContent().build();
     }
 
