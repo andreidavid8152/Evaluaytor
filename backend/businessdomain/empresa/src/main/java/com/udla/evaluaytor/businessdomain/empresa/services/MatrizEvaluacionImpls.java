@@ -18,8 +18,7 @@ import com.udla.evaluaytor.businessdomain.empresa.repositories.MatrizEvaluacionR
 @Service
 public class MatrizEvaluacionImpls implements MatrizEvaluacionService {
 
-
-     @Autowired
+    @Autowired
     private MatrizEvaluacionRepository matrizEvaluacionRepository;
 
     @Autowired
@@ -34,7 +33,7 @@ public class MatrizEvaluacionImpls implements MatrizEvaluacionService {
     @Override
     public MatrizEvaluacionDTO getMatrizEvaluacionById(Long id) {
         Optional<MatrizEvaluacion> matrizOpt = matrizEvaluacionRepository.findById(id);
-        return matrizOpt.map(this::convertToDTO).orElse(null); // O lanza una excepción
+        return matrizOpt.map(this::convertToDTO).orElse(null);
     }
 
     @Override
@@ -61,7 +60,7 @@ public class MatrizEvaluacionImpls implements MatrizEvaluacionService {
             MatrizEvaluacion updatedMatriz = matrizEvaluacionRepository.save(matriz);
             return convertToDTO(updatedMatriz);
         }
-        return null; // O lanza una excepción
+        return null;
     }
 
     private MatrizEvaluacionDTO convertToDTO(MatrizEvaluacion matrizEvaluacion) {

@@ -11,9 +11,8 @@ import com.udla.evaluaytor.businessdomain.empresa.dto.CategoriaDTO;
 import com.udla.evaluaytor.businessdomain.empresa.models.Categoria;
 import com.udla.evaluaytor.businessdomain.empresa.repositories.CategoriaRepository;
 
-
 @Service
-public class CategoriaServiceImpl  implements CategoriaService {
+public class CategoriaServiceImpl implements CategoriaService {
 
     @Autowired
     private CategoriaRepository categoriaRepository;
@@ -27,7 +26,7 @@ public class CategoriaServiceImpl  implements CategoriaService {
     @Override
     public CategoriaDTO getCategoriaById(Long id) {
         Optional<Categoria> categoriaOpt = categoriaRepository.findById(id);
-        return categoriaOpt.map(this::convertToDTO).orElse(null); // O lanza una excepción
+        return categoriaOpt.map(this::convertToDTO).orElse(null);
     }
 
     @Override
@@ -46,7 +45,7 @@ public class CategoriaServiceImpl  implements CategoriaService {
             Categoria updatedCategoria = categoriaRepository.save(categoria);
             return convertToDTO(updatedCategoria);
         }
-        return null; // O lanza una excepción
+        return null;
     }
 
     @Override

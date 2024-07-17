@@ -26,7 +26,7 @@ public class EstadoDetalleServiceImpl implements EstadoDetalleService {
     @Override
     public EstadoDetalleDTO getEstadoDetalleById(Long id) {
         Optional<EstadoDetalle> estadoOpt = estadoDetalleRepository.findById(id);
-        return estadoOpt.map(this::convertToDTO).orElse(null); // O lanza una excepción
+        return estadoOpt.map(this::convertToDTO).orElse(null); 
     }
 
     @Override
@@ -45,7 +45,7 @@ public class EstadoDetalleServiceImpl implements EstadoDetalleService {
             EstadoDetalle updatedEstado = estadoDetalleRepository.save(estado);
             return convertToDTO(updatedEstado);
         }
-        return null; // O lanza una excepción
+        return null; 
     }
 
     @Override

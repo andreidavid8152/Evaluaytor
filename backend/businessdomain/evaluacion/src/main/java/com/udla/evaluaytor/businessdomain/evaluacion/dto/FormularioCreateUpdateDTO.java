@@ -12,7 +12,7 @@ public class FormularioCreateUpdateDTO {
     private Long estadoFormularioId;
     private Long proveedorId;
     private Long categoridaId;
-    private Long peritoId; // Solo el ID del estado formulario
+    private Long peritoId;
     private List<DetalleFormularioCreateUpdateDTO> detallesFormulario;
 }
 

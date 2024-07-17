@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class EstadoDetalleDTO {
+    
     private Long id;
     private String nombre;
 }

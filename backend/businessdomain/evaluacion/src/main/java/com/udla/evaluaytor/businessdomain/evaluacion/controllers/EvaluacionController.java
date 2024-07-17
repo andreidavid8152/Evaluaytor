@@ -25,12 +25,11 @@ import com.udla.evaluaytor.businessdomain.evaluacion.services.FormularioService;
 @RestController
 @RequestMapping("/api/evaluacion")
 
-    
 public class EvaluacionController {
     @Autowired
     private FormularioService formularioService;
 
-    //EVALUACION
+    // EVALUACION
     @GetMapping("/findall")
     public List<FormularioDTO> getAllFormularios() {
         return formularioService.getAllFormularios();
@@ -53,7 +52,8 @@ public class EvaluacionController {
     }
 
     @PutMapping("/updatebyid/{id}")
-    public ResponseEntity<FormularioDTO> updateFormulario(@PathVariable Long id, @RequestBody FormularioCreateUpdateDTO formularioDTO) {
+    public ResponseEntity<FormularioDTO> updateFormulario(@PathVariable Long id,
+            @RequestBody FormularioCreateUpdateDTO formularioDTO) {
         FormularioDTO updatedFormulario = formularioService.updateFormulario(id, formularioDTO);
         if (updatedFormulario != null) {
             return ResponseEntity.ok(updatedFormulario);
@@ -68,8 +68,7 @@ public class EvaluacionController {
         return ResponseEntity.noContent().build();
     }
 
-    //ESTADO FORMULARIO
-
+    // ESTADO EVALUACION
     @Autowired
     private EstadoFormularioService estadoFormularioService;
 
@@ -89,13 +88,15 @@ public class EvaluacionController {
     }
 
     @PostMapping("/estadoevaluacion/save")
-    public ResponseEntity<EstadoFormularioDTO> createEstadoFormulario(@RequestBody EstadoFormularioDTO estadoFormularioDTO) {
+    public ResponseEntity<EstadoFormularioDTO> createEstadoFormulario(
+            @RequestBody EstadoFormularioDTO estadoFormularioDTO) {
         EstadoFormularioDTO createdEstado = estadoFormularioService.createEstadoFormulario(estadoFormularioDTO);
         return ResponseEntity.ok(createdEstado);
     }
 
     @PutMapping("/estadoevaluacion/updatebyid/{id}")
-    public ResponseEntity<EstadoFormularioDTO> updateEstadoFormulario(@PathVariable Long id, @RequestBody EstadoFormularioDTO estadoFormularioDTO) {
+    public ResponseEntity<EstadoFormularioDTO> updateEstadoFormulario(@PathVariable Long id,
+            @RequestBody EstadoFormularioDTO estadoFormularioDTO) {
         EstadoFormularioDTO updatedEstado = estadoFormularioService.updateEstadoFormulario(id, estadoFormularioDTO);
         if (updatedEstado != null) {
             return ResponseEntity.ok(updatedEstado);
@@ -110,8 +111,7 @@ public class EvaluacionController {
         return ResponseEntity.noContent().build();
     }
 
-
-    //ESTADO DETALLE
+    // ESTADO DETALLE
     @Autowired
     private EstadoDetalleService estadoDetalleService;
 
@@ -137,7 +137,8 @@ public class EvaluacionController {
     }
 
     @PutMapping("/estadodetalle/updatebyid/{id}")
-    public ResponseEntity<EstadoDetalleDTO> updateEstadoDetalle(@PathVariable Long id, @RequestBody EstadoDetalleDTO estadoDetalleDTO) {
+    public ResponseEntity<EstadoDetalleDTO> updateEstadoDetalle(@PathVariable Long id,
+            @RequestBody EstadoDetalleDTO estadoDetalleDTO) {
         EstadoDetalleDTO updatedEstado = estadoDetalleService.updateEstadoDetalle(id, estadoDetalleDTO);
         if (updatedEstado != null) {
             return ResponseEntity.ok(updatedEstado);

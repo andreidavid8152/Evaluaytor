@@ -45,15 +45,14 @@ public class FormularioImpl implements FormularioService {
     @Autowired
     private EstadoFormularioRepository estadoFormularioRepository;
 
-    
-@Autowired
-private DetalleFormularioRepository detalleFormularioRepository;
+    @Autowired
+    private DetalleFormularioRepository detalleFormularioRepository;
 
-@Autowired
-private EstadoDetalleRepository estadoDetalleRepository;
+    @Autowired
+    private EstadoDetalleRepository estadoDetalleRepository;
 
-@Autowired
-private DocumentoRepository documentoRepository;
+    @Autowired
+    private DocumentoRepository documentoRepository;
 
     @Override
     public List<FormularioDTO> getAllFormularios() {
@@ -70,7 +69,6 @@ private DocumentoRepository documentoRepository;
 
         WebClient webClient = webClientBuilder.build();
 
-        // Llamada a microservicio para obtener Proveedor
         Proveedor proveedor = webClient.get()
                 .uri("http://localhost:8081/api/empresa/proveedor/findbyid/{id}", proveedorId)
                 .retrieve()
@@ -78,7 +76,6 @@ private DocumentoRepository documentoRepository;
                 .block();
         formulario.setProveedor(proveedor);
 
-        // Llamada a microservicio para obtener Categoria
         Categoria categoria = webClient.get()
                 .uri("http://localhost:8081/api/empresa/categoria/findbyid/{id}", categoriaId)
                 .retrieve()
@@ -86,7 +83,6 @@ private DocumentoRepository documentoRepository;
                 .block();
         formulario.setCategoria(categoria);
 
-        // Llamada a microservicio para obtener Perito
         Perito perito = webClient.get()
                 .uri("http://localhost:8081/api/empresa/perito/findbyid/{id}", peritoId)
                 .retrieve()
@@ -94,8 +90,6 @@ private DocumentoRepository documentoRepository;
                 .block();
         formulario.setPerito(perito);
 
-        // Completar los detalles del formulario con información de la matriz de
-        // evaluación
         formulario.getDetallesFormulario().forEach(detalle -> {
             Long matrizEvaluacionId = detalle.getId_matrizevaluacion();
             MatrizEvaluacion matriz = webClient.get()
@@ -110,10 +104,8 @@ private DocumentoRepository documentoRepository;
     }
 
     private FormularioDTO completeAndConvertToDTO(FormularioEvaluacion formulario) {
-        // Completar la información del formulario con datos externos
         FormularioEvaluacion completedFormulario = completeFormularioWithExternalData(formulario);
 
-        // Convertir a DTO
         return convertToDTO(completedFormulario);
     }
 
@@ -125,20 +117,16 @@ private DocumentoRepository documentoRepository;
             FormularioEvaluacion completedFormulario = completeFormularioWithExternalData(formulario);
             return convertToDTO(completedFormulario);
         } else {
-            // Puedes lanzar una excepción si el formulario no se encuentra
             throw new RuntimeException("Formulario no encontrado");
         }
     }
 
     @Override
     public FormularioDTO createFormulario(FormularioCreateUpdateDTO formularioDTO) {
-        // Convertir el DTO a entidad
         FormularioEvaluacion formulario = convertToEntity(formularioDTO);
 
-        // Guardar la entidad principal
         FormularioEvaluacion savedFormulario = formularioRepository.save(formulario);
 
-        // Convertir y guardar los detalles del formulario
         if (formularioDTO.getDetallesFormulario() != null) {
             List<FormularioEvaluacionDetalle> detalles = formularioDTO.getDetallesFormulario().stream()
                     .map(detalleDTO -> {
@@ -150,10 +138,8 @@ private DocumentoRepository documentoRepository;
             savedFormulario.setDetallesFormulario(detalles);
         }
 
-        // Completar el formulario con datos externos
         FormularioEvaluacion completedFormulario = completeFormularioWithExternalData(savedFormulario);
 
-        // Convertir la entidad completa a DTO
         return convertToDTO(completedFormulario);
     }
 
@@ -166,20 +152,16 @@ private DocumentoRepository documentoRepository;
         formulario.setNumero(formularioDTO.getNumero());
         formulario.setEvaluacion(formularioDTO.getEvaluacion());
 
-        // Asignar EstadoFormulario
         EstadoFormulario estadoFormulario = estadoFormularioRepository.findById(formularioDTO.getEstadoFormularioId())
                 .orElseThrow(() -> new RuntimeException("EstadoFormulario no encontrado"));
         formulario.setEstadoFormulario(estadoFormulario);
 
-        // Asignar IDs de Perito, Proveedor y Categoria
         formulario.setId_perito(formularioDTO.getPeritoId());
         formulario.setId_proveedor(formularioDTO.getProveedorId());
         formulario.setId_categoria(formularioDTO.getCategoridaId());
 
-        // Guardar el formulario actualizado
         FormularioEvaluacion updatedFormulario = formularioRepository.save(formulario);
 
-        // Actualizar y guardar los detalles del formulario
         if (formularioDTO.getDetallesFormulario() != null) {
             List<FormularioEvaluacionDetalle> detalles = formularioDTO.getDetallesFormulario().stream()
                     .map(detalleDTO -> {
@@ -191,10 +173,8 @@ private DocumentoRepository documentoRepository;
             updatedFormulario.setDetallesFormulario(detalles);
         }
 
-        // Completar el formulario con datos externos
         FormularioEvaluacion completedFormulario = completeFormularioWithExternalData(updatedFormulario);
 
-        // Convertir a DTO
         return convertToDTO(completedFormulario);
     }
 
@@ -210,11 +190,10 @@ private DocumentoRepository documentoRepository;
         }
 
         if (dto.getDocumento() != null) {
-            // Crear un nuevo documento siempre
             Documento documento = new Documento();
             documento.setNombre(dto.getDocumento().getNombre());
             documento.setPath(dto.getDocumento().getPath());
-            documento = documentoRepository.save(documento); // Guardar el nuevo documento
+            documento = documentoRepository.save(documento);
             detalle.setDocumento(documento);
         }
 
@@ -316,12 +295,10 @@ private DocumentoRepository documentoRepository;
         formulario.setNumero(dto.getNumero());
         formulario.setEvaluacion(dto.getEvaluacion());
 
-        // Asignar EstadoFormulario
         EstadoFormulario estadoFormulario = estadoFormularioRepository.findById(dto.getEstadoFormularioId())
                 .orElseThrow(() -> new RuntimeException("EstadoFormulario no encontrado"));
         formulario.setEstadoFormulario(estadoFormulario);
 
-        // Asignar IDs de Perito, Proveedor y Categoria
         formulario.setId_perito(dto.getPeritoId());
         formulario.setId_proveedor(dto.getProveedorId());
         formulario.setId_categoria(dto.getCategoridaId());
@@ -330,16 +307,13 @@ private DocumentoRepository documentoRepository;
     }
 
     public FormularioDTO getFormularioEvaluacion(Long formularioId) {
-        // Obtén el FormularioEvaluacion desde el repositorio
         FormularioEvaluacion formularioEvaluacion = formularioRepository.findById(formularioId)
                 .orElseThrow(() -> new RuntimeException("Formulario no encontrado"));
 
-        // Obtén los IDs de Proveedor y Perito desde el formulario
         Long proveedorId = formularioEvaluacion.getId_proveedor();
         Long categoriaId = formularioEvaluacion.getId_categoria();
         Long peritoId = formularioEvaluacion.getId_perito();
 
-        // Llama al microservicio de proveedor para obtener la información del proveedor
         WebClient webClient = webClientBuilder.build();
         Mono<Proveedor> proveedorMono = webClient.get()
                 .uri("http://localhost:8081/api/empresa/proveedor/findbyid/{id}", proveedorId)

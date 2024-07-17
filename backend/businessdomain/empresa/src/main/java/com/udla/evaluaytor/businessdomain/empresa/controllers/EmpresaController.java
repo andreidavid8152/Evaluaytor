@@ -32,9 +32,6 @@ import com.udla.evaluaytor.businessdomain.empresa.services.CategoriaService;
 import com.udla.evaluaytor.businessdomain.empresa.services.MatrizEvaluacionService;
 import com.udla.evaluaytor.businessdomain.empresa.services.ProveedorService;
 
-
-
-
 @RestController
 @RequestMapping("/api/empresa")
 public class EmpresaController {
@@ -47,13 +44,13 @@ public class EmpresaController {
     @Autowired
     PeritoRepository peritoRepository;
 
-    @Autowired 
+    @Autowired
     CategoriaRepository categoriaRepository;
 
     @Autowired
     private ProveedorService proveedorService;
- 
-    @Autowired 
+
+    @Autowired
     CategoriaService categoriaService;
 
     @Autowired
@@ -62,20 +59,19 @@ public class EmpresaController {
     @Autowired
     private MatrizEvaluacionService matrizEvaluacionService;
 
-
-    // Crear una nuevo proveedor
+    // PROVEEDOR
     @PostMapping("/proveedor/save")
     public ResponseEntity<ProveedorResponseDTO> createProveedor(@RequestBody ProveedorDTO proveedorDTO) {
         ProveedorResponseDTO proveedorGuardado = proveedorService.createProveedor(proveedorDTO);
         return new ResponseEntity<>(proveedorGuardado, HttpStatus.CREATED);
     }
-      
+
     @PutMapping("/proveedor/updatebyid/{id}")
-    public ResponseEntity<ProveedorResponseDTO> updateProveedor(@PathVariable Long id, @RequestBody ProveedorDTO proveedorUpdateDTO) {
+    public ResponseEntity<ProveedorResponseDTO> updateProveedor(@PathVariable Long id,
+            @RequestBody ProveedorDTO proveedorUpdateDTO) {
         ProveedorResponseDTO updatedProveedor = proveedorService.updateProveedor(id, proveedorUpdateDTO);
         return ResponseEntity.ok(updatedProveedor);
     }
-
 
     @GetMapping("proveedor/findall")
     public ResponseEntity<List<ProveedorResponseDTO>> getAllProveedores() {
@@ -84,12 +80,11 @@ public class EmpresaController {
     }
 
     @GetMapping("proveedor/findbyid/{id}")
-     public ResponseEntity<ProveedorResponseDTO> getProveedorById(@PathVariable Long id) {
+    public ResponseEntity<ProveedorResponseDTO> getProveedorById(@PathVariable Long id) {
         ProveedorResponseDTO proveedor = proveedorService.getProveedorById(id);
         return ResponseEntity.ok(proveedor);
     }
 
-    // Metodo para eliminar un proveedor
     @DeleteMapping("/proveedor/deletebyid/{id}")
     public ResponseEntity<Void> eliminarProveedor(@PathVariable Long id) {
         Optional<Proveedor> proveedorOptional = proveedorRepository.findById(id);
@@ -101,22 +96,8 @@ public class EmpresaController {
         }
     }
 
-    /*@GetMapping("perito/findbyid/{id}")
-    public ResponseEntity<Perito> getPeritoById(@PathVariable Long id) {
-        Optional<Perito> peritoOptional = peritoRepository.findById(id);
-        return peritoOptional.map(perito -> new ResponseEntity<>(perito, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    @GetMapping("categoria/findbyid/{id}")
-    public ResponseEntity<Categoria> getCategoriaById(@PathVariable Long id) {
-        Optional<Categoria> categoriaOptional = categoriaRepository.findById(id);
-        return categoriaOptional.map(categoria -> new ResponseEntity<>(categoria, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }*/
-
-    //Categorias
- @GetMapping("/categoria/findall")
+    // CATEGORIA
+    @GetMapping("/categoria/findall")
     public List<CategoriaDTO> getAllCategorias() {
         return categoriaService.getAllCategorias();
     }
@@ -147,15 +128,14 @@ public class EmpresaController {
         }
     }
 
-    // Metodo para eliminar una categoria
     @DeleteMapping("/categoria/deletebyid/{id}")
     public ResponseEntity<Void> eliminarCategoria(@PathVariable Long id) {
         categoriaService.deleteCategoria(id);
         return ResponseEntity.noContent().build();
     }
 
-    //PERITO
-@GetMapping("/perito/findall")
+    // PERITO
+    @GetMapping("/perito/findall")
     public List<Perito> listarPeritos() {
         return peritoRepository.findAll();
     }
@@ -167,14 +147,12 @@ public class EmpresaController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-  
     @PostMapping("/perito/save")
     public ResponseEntity<Perito> crearPerito(@RequestBody Perito nuevoPremio) {
         Perito premioGuardado = peritoRepository.save(nuevoPremio);
         return new ResponseEntity<>(premioGuardado, HttpStatus.CREATED);
     }
 
-    // Actualizar perito
     @PutMapping("/perito/updatebyid/{id}")
     public ResponseEntity<Perito> actualizarPerito(@PathVariable Long id, @RequestBody Perito peritoActual) {
         Optional<Perito> peritoOptional = peritoRepository.findById(id);
@@ -187,7 +165,6 @@ public class EmpresaController {
         }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    // Eliminar un perito por ID
     @DeleteMapping("/perito/deletebyid/{id}")
     public ResponseEntity<Void> eliminarPerito(@PathVariable Long id) {
         Optional<Perito> peritoOptional = peritoRepository.findById(id);
@@ -199,8 +176,7 @@ public class EmpresaController {
         }
     }
 
-    //MATRIZ EVALUACIÓN
-
+    // MATRIZ EVALUACIÓN
     @GetMapping("/matrizevaluacion/findall")
     public List<MatrizEvaluacionDTO> getAllMatricesEvaluacion() {
         return matrizEvaluacionService.getAllMatricesEvaluacion();
@@ -216,8 +192,9 @@ public class EmpresaController {
         }
     }
 
-     @PostMapping("/matrizevaluacion/save")
-    public ResponseEntity<MatrizEvaluacionDTO> createMatrizEvaluacion(@RequestBody MatrizEvaluacionCreateUpdateDTO matrizEvaluacionDTO) {
+    @PostMapping("/matrizevaluacion/save")
+    public ResponseEntity<MatrizEvaluacionDTO> createMatrizEvaluacion(
+            @RequestBody MatrizEvaluacionCreateUpdateDTO matrizEvaluacionDTO) {
         MatrizEvaluacionDTO createdMatriz = matrizEvaluacionService.createMatrizEvaluacion(matrizEvaluacionDTO);
         return ResponseEntity.ok(createdMatriz);
     }
@@ -232,7 +209,7 @@ public class EmpresaController {
             return ResponseEntity.notFound().build();
         }
     }
-    
+
     @DeleteMapping("/matrizevaluacion/deletebyid/{id}")
     public ResponseEntity<Void> eliminarMatrizEvaluacion(@PathVariable Long id) {
         Optional<MatrizEvaluacion> matrizEvaluacionOptional = matrizEvaluacionRepository.findById(id);
@@ -245,4 +222,3 @@ public class EmpresaController {
     }
 
 }
-

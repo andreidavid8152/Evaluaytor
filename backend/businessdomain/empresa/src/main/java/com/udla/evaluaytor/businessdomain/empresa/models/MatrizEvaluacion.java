@@ -20,8 +20,7 @@ public class MatrizEvaluacion {
     private int requiereDocumento;
 
     @ManyToOne
-    @JoinColumn(name = "id_categoria") // Especifica el nombre de la columna en la base de datos
+    @JoinColumn(name = "id_categoria")
     private Categoria categoria;
-
 }
 

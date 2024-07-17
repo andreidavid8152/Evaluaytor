@@ -7,6 +7,6 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Perito extends Empresa{
+public class Perito extends Empresa {
 
 }

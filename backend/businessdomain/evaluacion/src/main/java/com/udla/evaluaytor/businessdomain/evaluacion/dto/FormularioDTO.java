@@ -11,8 +11,8 @@ import lombok.Data;
 
 @Data
 public class FormularioDTO {
+    
     private Long id;
-
     private Date fecha;
     private String numero;
     private int evaluacion;

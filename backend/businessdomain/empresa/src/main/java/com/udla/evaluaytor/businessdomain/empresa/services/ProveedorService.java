@@ -7,7 +7,10 @@ import com.udla.evaluaytor.businessdomain.empresa.dto.ProveedorResponseDTO;
 
 public interface ProveedorService {
     List<ProveedorResponseDTO> getAllProveedores();
+
     ProveedorResponseDTO getProveedorById(Long id);
+
     ProveedorResponseDTO createProveedor(ProveedorDTO proveedorDTO);
+
     ProveedorResponseDTO updateProveedor(Long id, ProveedorDTO proveedorUpdateDTO);
 }

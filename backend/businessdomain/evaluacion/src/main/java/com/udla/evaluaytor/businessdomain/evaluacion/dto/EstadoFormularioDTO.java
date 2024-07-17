@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class EstadoFormularioDTO {
+    
     private Long id;
     private String nombre;
-    
 }

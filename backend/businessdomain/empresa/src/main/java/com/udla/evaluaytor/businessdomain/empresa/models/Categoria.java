@@ -25,6 +25,4 @@ public class Categoria {
 
     @OneToMany(mappedBy = "categoria")
     private List<MatrizEvaluacion> matricesEvaluacion;
-
-
 }

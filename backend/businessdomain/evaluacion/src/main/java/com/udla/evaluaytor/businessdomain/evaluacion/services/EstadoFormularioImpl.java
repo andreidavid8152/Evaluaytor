@@ -26,7 +26,7 @@ public class EstadoFormularioImpl implements EstadoFormularioService {
     @Override
     public EstadoFormularioDTO getEstadoFormularioById(Long id) {
         Optional<EstadoFormulario> estadoOpt = estadoFormularioRepository.findById(id);
-        return estadoOpt.map(this::convertToDTO).orElse(null); // O lanza una excepción
+        return estadoOpt.map(this::convertToDTO).orElse(null);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class EstadoFormularioImpl implements EstadoFormularioService {
             EstadoFormulario updatedEstado = estadoFormularioRepository.save(estado);
             return convertToDTO(updatedEstado);
         }
-        return null; // O lanza una excepción
+        return null;
     }
 
     @Override

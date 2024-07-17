@@ -13,6 +13,7 @@ import lombok.Data;
 @Data
 @Entity
 public class FormularioEvaluacionDetalle {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,6 +36,4 @@ public class FormularioEvaluacionDetalle {
 
     @Transient
     private MatrizEvaluacion matrizEvaluacion;
-
-    
 }
