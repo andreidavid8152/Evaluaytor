@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.udla.evaluaytor.businessdomain.evaluacion.dto.DetalleFormularioCreateUpdateDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.dto.DetalleFormularioDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.dto.DocumentoDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.dto.EstadoDetalleDTO;
@@ -16,12 +17,17 @@ import com.udla.evaluaytor.businessdomain.evaluacion.dto.EstadoFormularioDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.dto.FormularioCreateUpdateDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.dto.FormularioDTO;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.Categoria;
+import com.udla.evaluaytor.businessdomain.evaluacion.models.Documento;
+import com.udla.evaluaytor.businessdomain.evaluacion.models.EstadoDetalle;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.EstadoFormulario;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.FormularioEvaluacion;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.FormularioEvaluacionDetalle;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.MatrizEvaluacion;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.Perito;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.Proveedor;
+import com.udla.evaluaytor.businessdomain.evaluacion.repositories.DetalleFormularioRepository;
+import com.udla.evaluaytor.businessdomain.evaluacion.repositories.DocumentoRepository;
+import com.udla.evaluaytor.businessdomain.evaluacion.repositories.EstadoDetalleRepository;
 import com.udla.evaluaytor.businessdomain.evaluacion.repositories.EstadoFormularioRepository;
 import com.udla.evaluaytor.businessdomain.evaluacion.repositories.FormularioRepository;
 
@@ -38,6 +44,16 @@ public class FormularioImpl implements FormularioService {
 
     @Autowired
     private EstadoFormularioRepository estadoFormularioRepository;
+
+    
+@Autowired
+private DetalleFormularioRepository detalleFormularioRepository;
+
+@Autowired
+private EstadoDetalleRepository estadoDetalleRepository;
+
+@Autowired
+private DocumentoRepository documentoRepository;
 
     @Override
     public List<FormularioDTO> getAllFormularios() {
@@ -119,8 +135,20 @@ public class FormularioImpl implements FormularioService {
         // Convertir el DTO a entidad
         FormularioEvaluacion formulario = convertToEntity(formularioDTO);
 
-        // Guardar la entidad
+        // Guardar la entidad principal
         FormularioEvaluacion savedFormulario = formularioRepository.save(formulario);
+
+        // Convertir y guardar los detalles del formulario
+        if (formularioDTO.getDetallesFormulario() != null) {
+            List<FormularioEvaluacionDetalle> detalles = formularioDTO.getDetallesFormulario().stream()
+                    .map(detalleDTO -> {
+                        FormularioEvaluacionDetalle detalle = convertDetalleToEntity(detalleDTO);
+                        detalle.setFormulario(savedFormulario);
+                        return detalleFormularioRepository.save(detalle);
+                    })
+                    .collect(Collectors.toList());
+            savedFormulario.setDetallesFormulario(detalles);
+        }
 
         // Completar el formulario con datos externos
         FormularioEvaluacion completedFormulario = completeFormularioWithExternalData(savedFormulario);
@@ -151,11 +179,48 @@ public class FormularioImpl implements FormularioService {
         // Guardar el formulario actualizado
         FormularioEvaluacion updatedFormulario = formularioRepository.save(formulario);
 
+        // Actualizar y guardar los detalles del formulario
+        if (formularioDTO.getDetallesFormulario() != null) {
+            List<FormularioEvaluacionDetalle> detalles = formularioDTO.getDetallesFormulario().stream()
+                    .map(detalleDTO -> {
+                        FormularioEvaluacionDetalle detalle = convertDetalleToEntity(detalleDTO);
+                        detalle.setFormulario(updatedFormulario);
+                        return detalleFormularioRepository.save(detalle);
+                    })
+                    .collect(Collectors.toList());
+            updatedFormulario.setDetallesFormulario(detalles);
+        }
+
         // Completar el formulario con datos externos
         FormularioEvaluacion completedFormulario = completeFormularioWithExternalData(updatedFormulario);
 
         // Convertir a DTO
         return convertToDTO(completedFormulario);
+    }
+
+    private FormularioEvaluacionDetalle convertDetalleToEntity(DetalleFormularioCreateUpdateDTO dto) {
+        FormularioEvaluacionDetalle detalle = new FormularioEvaluacionDetalle();
+        detalle.setCumplimiento(dto.getCumplimiento());
+        detalle.setObservacion(dto.getObservacion());
+
+        if (dto.getEstadoDetalleId() != null) {
+            EstadoDetalle estadoDetalle = estadoDetalleRepository.findById(dto.getEstadoDetalleId())
+                    .orElseThrow(() -> new RuntimeException("EstadoDetalle no encontrado"));
+            detalle.setEstadoDetalle(estadoDetalle);
+        }
+
+        if (dto.getDocumento() != null) {
+            // Crear un nuevo documento siempre
+            Documento documento = new Documento();
+            documento.setNombre(dto.getDocumento().getNombre());
+            documento.setPath(dto.getDocumento().getPath());
+            documento = documentoRepository.save(documento); // Guardar el nuevo documento
+            detalle.setDocumento(documento);
+        }
+
+        detalle.setId_matrizevaluacion(dto.getId_matrizevaluacion());
+
+        return detalle;
     }
 
     @Override
