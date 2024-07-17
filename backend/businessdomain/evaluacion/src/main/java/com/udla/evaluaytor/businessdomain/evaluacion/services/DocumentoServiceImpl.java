@@ -42,11 +42,11 @@ public class DocumentoServiceImpl implements DocumentoService {
         if (documentoOpt.isPresent()) {
             Documento documento = documentoOpt.get();
             documento.setNombre(documentoDTO.getNombre());
-            //documento.setPath(documentoDTO.getPath());
+            documento.setPath(documentoDTO.getPath());
             Documento updatedDocumento = documentoRepository.save(documento);
             return convertToDTO(updatedDocumento);
         }
-        return null; // O lanza una excepción
+        return null; 
     }
 
     @Override
@@ -58,14 +58,14 @@ public class DocumentoServiceImpl implements DocumentoService {
         DocumentoDTO dto = new DocumentoDTO();
         dto.setId(documento.getId());
         dto.setNombre(documento.getNombre());
-        //dto.setPath(documento.getPath());
+        dto.setPath(documento.getPath());
         return dto;
     }
 
     private Documento convertToEntity(DocumentoDTO dto) {
         Documento documento = new Documento();
         documento.setNombre(dto.getNombre());
-       // documento.setPath(dto.getPath());
+        documento.setPath(dto.getPath());
         return documento;
     }
 }

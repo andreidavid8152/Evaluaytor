@@ -184,6 +184,7 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
             DocumentoDTO documentoDTO = new DocumentoDTO();
             documentoDTO.setId(detalle.getDocumento().getId());
             documentoDTO.setNombre(detalle.getDocumento().getNombre());
+            documentoDTO.setPath(detalle.getDocumento().getPath());
             dto.setDocumentoDTO(documentoDTO);
         }
 

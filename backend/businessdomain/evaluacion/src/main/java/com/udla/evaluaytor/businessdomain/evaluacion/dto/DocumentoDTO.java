@@ -6,5 +6,5 @@ import lombok.Data;
 public class DocumentoDTO {
     private Long id;
     private String nombre;
-    private String formato;
+    private String path;
 }
