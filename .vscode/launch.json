@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-EmpresaApplication<empresa>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.udla.evaluaytor.businessdomain.empresa.EmpresaApplication",
+            "projectName": "empresa",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-EvaluacionApplication<evaluacion>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.udla.evaluaytor.businessdomain.evaluacion.EvaluacionApplication",
+            "projectName": "evaluacion",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
