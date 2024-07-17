@@ -99,9 +99,17 @@ public class FormularioImpl implements FormularioService {
 
     @Override
     public FormularioDTO createFormulario(FormularioCreateUpdateDTO formularioDTO) {
+        // Convertir el DTO a entidad
         FormularioEvaluacion formulario = convertToEntity(formularioDTO);
+
+        // Guardar la entidad
         FormularioEvaluacion savedFormulario = formularioRepository.save(formulario);
-        return convertToDTO(savedFormulario);
+
+        // Completar el formulario con datos externos
+        FormularioEvaluacion completedFormulario = completeFormularioWithExternalData(savedFormulario);
+
+        // Convertir la entidad completa a DTO
+        return convertToDTO(completedFormulario);
     }
 
     @Override
@@ -123,8 +131,14 @@ public class FormularioImpl implements FormularioService {
         formulario.setId_proveedor(formularioDTO.getProveedorId());
         formulario.setId_categoria(formularioDTO.getCategoridaId());
 
-        FormularioEvaluacion savedFormulario = formularioRepository.save(formulario);
-        return convertToDTO(savedFormulario);
+        // Guardar el formulario actualizado
+        FormularioEvaluacion updatedFormulario = formularioRepository.save(formulario);
+
+        // Completar el formulario con datos externos
+        FormularioEvaluacion completedFormulario = completeFormularioWithExternalData(updatedFormulario);
+
+        // Convertir a DTO
+        return convertToDTO(completedFormulario);
     }
 
     @Override

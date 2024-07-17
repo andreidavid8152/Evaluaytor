@@ -21,6 +21,7 @@ import com.udla.evaluaytor.businessdomain.evaluacion.models.Proveedor;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.Categoria;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.Documento;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.EstadoDetalle;
+import com.udla.evaluaytor.businessdomain.evaluacion.models.EstadoFormulario;
 import com.udla.evaluaytor.businessdomain.evaluacion.models.FormularioEvaluacion;
 import com.udla.evaluaytor.businessdomain.evaluacion.repositories.DetalleFormularioRepository;
 import com.udla.evaluaytor.businessdomain.evaluacion.repositories.DocumentoRepository;
@@ -39,6 +40,9 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
     private WebClient.Builder webClientBuilder;
 
     @Autowired
+    private FormularioService formularioService;
+
+    @Autowired
     private EstadoDetalleRepository estadoDetalleRepository;
 
     @Autowired
@@ -51,12 +55,12 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
         FormularioEvaluacionDetalle completedDetalle = completeDetalleWithExternalData(detalle);
         return convertToDTO(completedDetalle);
     }
-    
+
     private FormularioEvaluacionDetalle completeDetalleWithExternalData(FormularioEvaluacionDetalle detalle) {
         Long matrizEvaluacionId = detalle.getId_matrizevaluacion();
-    
+
         WebClient webClient = webClientBuilder.build();
-    
+
         // Llamada a microservicio para obtener MatrizEvaluacion
         MatrizEvaluacion matriz = webClient.get()
             .uri("http://localhost:8086/api/empresa/matrizevaluacion/find/{id}", matrizEvaluacionId)
@@ -64,10 +68,15 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
             .bodyToMono(MatrizEvaluacion.class)
             .block();
         detalle.setMatrizEvaluacion(matriz);
-    
+
+        // Obtener el formulario completo a través del servicio de formulario
+        FormularioDTO formularioDTO = formularioService.getFormularioEvaluacion(detalle.getFormulario().getId());
+        FormularioEvaluacion formulario = convertToEntity(formularioDTO);
+        detalle.setFormulario(formulario);
+
         return detalle;
     }
-    
+
     @Override
     public List<DetalleFormularioDTO> getAllDetallesFormulario() {
         List<FormularioEvaluacionDetalle> detalles = detalleFormularioRepository.findAll();
@@ -75,12 +84,11 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
             .map(this::completeAndConvertToDTO)
             .collect(Collectors.toList());
     }
-    
 
     @Override
     public DetalleFormularioDTO getDetalleFormularioById(Long id) {
         Optional<FormularioEvaluacionDetalle> detalleOpt = detalleFormularioRepository.findById(id);
-        return detalleOpt.map(this::convertToDTO).orElse(null); // O lanza una excepción
+        return detalleOpt.map(this::completeAndConvertToDTO).orElse(null); // O lanza una excepción
     }
 
     @Override
@@ -89,7 +97,7 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
         FormularioEvaluacionDetalle savedDetalle = detalleFormularioRepository.save(detalle);
         return convertToDTO(savedDetalle);
     }
-    
+
     @Override
     public DetalleFormularioDTO updateDetalleFormulario(Long id, DetalleFormularioCreateUpdateDTO detalleFormularioDTO) {
         Optional<FormularioEvaluacionDetalle> detalleOpt = detalleFormularioRepository.findById(id);
@@ -97,69 +105,88 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
             FormularioEvaluacionDetalle detalle = detalleOpt.get();
             detalle.setCumplimiento(detalleFormularioDTO.getCumplimiento());
             detalle.setObservacion(detalleFormularioDTO.getObservacion());
-    
+
             Optional<EstadoDetalle> estadoOpt = estadoDetalleRepository.findById(detalleFormularioDTO.getEstadoDetalleId());
             estadoOpt.ifPresent(detalle::setEstadoDetalle);
-    
+
             Optional<Documento> documentoOpt = documentoRepository.findById(detalleFormularioDTO.getDocumentoId());
             documentoOpt.ifPresent(detalle::setDocumento);
-    
-            Optional<FormularioEvaluacion> formularioOpt = formularioRepository.findById(detalleFormularioDTO.getFormularioId());
-            formularioOpt.ifPresent(detalle::setFormulario);
-    
+
             detalle.setId_matrizevaluacion(detalleFormularioDTO.getId_matrizevaluacion()); // Setear el ID de la matriz de evaluación
-    
+
             FormularioEvaluacionDetalle updatedDetalle = detalleFormularioRepository.save(detalle);
             return convertToDTO(updatedDetalle);
         }
         return null; // O lanza una excepción
     }
-    
 
     @Override
     public void deleteDetalleFormulario(Long id) {
         detalleFormularioRepository.deleteById(id);
     }
 
-
-    
     private DetalleFormularioDTO convertToDTO(FormularioEvaluacionDetalle detalle) {
         DetalleFormularioDTO dto = new DetalleFormularioDTO();
         dto.setId(detalle.getId());
         dto.setCumplimiento(detalle.getCumplimiento());
         dto.setObservacion(detalle.getObservacion());
-    
+
         if (detalle.getEstadoDetalle() != null) {
             EstadoDetalleDTO estadoDTO = new EstadoDetalleDTO();
             estadoDTO.setId(detalle.getEstadoDetalle().getId());
             estadoDTO.setNombre(detalle.getEstadoDetalle().getNombre());
             dto.setEstadoDetalleDTO(estadoDTO);
         }
-    
+
         if (detalle.getDocumento() != null) {
             DocumentoDTO documentoDTO = new DocumentoDTO();
             documentoDTO.setId(detalle.getDocumento().getId());
             documentoDTO.setNombre(detalle.getDocumento().getNombre());
             dto.setDocumentoDTO(documentoDTO);
         }
-    
+
         if (detalle.getFormulario() != null) {
             FormularioDTO formularioDTO = new FormularioDTO();
             formularioDTO.setId(detalle.getFormulario().getId());
             formularioDTO.setFecha(detalle.getFormulario().getFecha());
             formularioDTO.setNumero(detalle.getFormulario().getNumero());
             formularioDTO.setEvaluacion(detalle.getFormulario().getEvaluacion());
-    
+
             if (detalle.getFormulario().getEstadoFormulario() != null) {
                 EstadoFormularioDTO estadoFormularioDTO = new EstadoFormularioDTO();
                 estadoFormularioDTO.setId(detalle.getFormulario().getEstadoFormulario().getId());
                 estadoFormularioDTO.setNombre(detalle.getFormulario().getEstadoFormulario().getNombre());
                 formularioDTO.setEstadoFormularioDTO(estadoFormularioDTO);
             }
-    
+
+            if (detalle.getFormulario().getCategoria() != null) {
+                Categoria categoria = new Categoria();
+                categoria.setId(detalle.getFormulario().getCategoria().getId());
+                categoria.setDescripcion(detalle.getFormulario().getCategoria().getDescripcion());
+                formularioDTO.setCategoria(categoria);
+            }
+
+            if (detalle.getFormulario().getPerito() != null) {
+                Perito perito = new Perito();
+                perito.setId(detalle.getFormulario().getPerito().getId());
+                perito.setNombre(detalle.getFormulario().getPerito().getNombre());
+                perito.setDireccion(detalle.getFormulario().getPerito().getDireccion());
+                perito.setTelefono(detalle.getFormulario().getPerito().getTelefono());
+                formularioDTO.setPerito(perito);
+            }
+
+            if (detalle.getFormulario().getProveedor() != null) {
+                Proveedor proveedor = new Proveedor();
+                proveedor.setId(detalle.getFormulario().getProveedor().getId());
+                proveedor.setNombre(detalle.getFormulario().getProveedor().getNombre());
+                proveedor.setDireccion(detalle.getFormulario().getProveedor().getDireccion());
+                proveedor.setTelefono(detalle.getFormulario().getProveedor().getTelefono());
+                formularioDTO.setProveedor(proveedor);
+            }
+
             dto.setFormularioDTO(formularioDTO);
         }
-    
+
         if (detalle.getMatrizEvaluacion() != null) {
             MatrizEvaluacion matriz = new MatrizEvaluacion();
             matriz.setId(detalle.getMatrizEvaluacion().getId());
@@ -168,10 +195,9 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
             matriz.setRequiereDocumento(detalle.getMatrizEvaluacion().getRequiereDocumento());
             dto.setMatrizEvaluacion(matriz);
         }
-    
+
         return dto;
     }
-    
 
     private FormularioEvaluacionDetalle convertToEntity(DetalleFormularioCreateUpdateDTO dto) {
         FormularioEvaluacionDetalle detalle = new FormularioEvaluacionDetalle();
@@ -191,25 +217,66 @@ public class DetalleFormularioServiceImpl implements DetalleFormularioService {
     }
 
     @Override
-    public DetalleFormularioDTO  getFormularioEvaluacionDetalle(Long formularioDetalleId) {
-        // Obtén el FormularioEvaluacion desde el repositorio
+    public DetalleFormularioDTO getFormularioEvaluacionDetalle(Long formularioDetalleId) {
         FormularioEvaluacionDetalle formularioEvaluacionDetalle = detalleFormularioRepository.findById(formularioDetalleId)
             .orElseThrow(() -> new RuntimeException("Formulario no encontrado"));
 
-        // Obtener id matriz desde detalle
         Long matrizEvaluacion = formularioEvaluacionDetalle.getId_matrizevaluacion();
 
-
-        // Llama al microservicio de proveedor para obtener la información del proveedor
         WebClient webClient = webClientBuilder.build();
         Mono<MatrizEvaluacion> matrizMono = webClient.get()
             .uri("http://localhost:8086/api/empresa/matrizevaluacion/find/{id}", matrizEvaluacion)
             .retrieve()
             .bodyToMono(MatrizEvaluacion.class);
-            MatrizEvaluacion matriz = matrizMono.block();
-            formularioEvaluacionDetalle.setMatrizEvaluacion(matriz);
+        MatrizEvaluacion matriz = matrizMono.block();
+        formularioEvaluacionDetalle.setMatrizEvaluacion(matriz);
 
-        
-            return convertToDTO(formularioEvaluacionDetalle);
+        FormularioDTO formularioDTO = formularioService.getFormularioEvaluacion(formularioEvaluacionDetalle.getFormulario().getId());
+        FormularioEvaluacion formulario = convertToEntity(formularioDTO);
+        formularioEvaluacionDetalle.setFormulario(formulario);
+
+        return convertToDTO(formularioEvaluacionDetalle);
+    }
+
+    private FormularioEvaluacion convertToEntity(FormularioDTO dto) {
+        FormularioEvaluacion formulario = new FormularioEvaluacion();
+        formulario.setId(dto.getId());
+        formulario.setFecha(dto.getFecha());
+        formulario.setNumero(dto.getNumero());
+        formulario.setEvaluacion(dto.getEvaluacion());
+
+        if (dto.getEstadoFormularioDTO() != null) {
+            EstadoFormulario estadoFormulario = new EstadoFormulario();
+            estadoFormulario.setId(dto.getEstadoFormularioDTO().getId());
+            estadoFormulario.setNombre(dto.getEstadoFormularioDTO().getNombre());
+            formulario.setEstadoFormulario(estadoFormulario);
+        }
+
+        if (dto.getCategoria() != null) {
+            Categoria categoria = new Categoria();
+            categoria.setId(dto.getCategoria().getId());
+            categoria.setDescripcion(dto.getCategoria().getDescripcion());
+            formulario.setCategoria(categoria);
+        }
+
+        if (dto.getPerito() != null) {
+            Perito perito = new Perito();
+            perito.setId(dto.getPerito().getId());
+            perito.setNombre(dto.getPerito().getNombre());
+            perito.setDireccion(dto.getPerito().getDireccion());
+            perito.setTelefono(dto.getPerito().getTelefono());
+            formulario.setPerito(perito);
+        }
+
+        if (dto.getProveedor() != null) {
+            Proveedor proveedor = new Proveedor();
+            proveedor.setId(dto.getProveedor().getId());
+            proveedor.setNombre(dto.getProveedor().getNombre());
+            proveedor.setDireccion(dto.getProveedor().getDireccion());
+            proveedor.setTelefono(dto.getProveedor().getTelefono());
+            formulario.setProveedor(proveedor);
+        }
+
+        return formulario;
     }
 }
