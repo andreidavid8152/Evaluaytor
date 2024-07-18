@@ -206,10 +206,20 @@ public class FormularioImpl implements FormularioService {
     @Override
     @Transactional
     public void deleteFormulario(Long id) {
-        // Eliminar filas dependientes
+        // Obtener los detalles del formulario para eliminar los documentos asociados
+        List<FormularioEvaluacionDetalle> detalles = detalleFormularioRepository.findByFormularioId(id);
+
+        // Eliminar los documentos asociados
+        for (FormularioEvaluacionDetalle detalle : detalles) {
+            if (detalle.getDocumento() != null) {
+                documentoRepository.deleteById(detalle.getDocumento().getId());
+            }
+        }
+
+        // Eliminar los detalles del formulario
         detalleFormularioRepository.deleteByFormularioId(id);
 
-        // Eliminar fila principal
+        // Eliminar el formulario principal
         formularioRepository.deleteById(id);
     }
 
