@@ -31,6 +31,7 @@ import com.udla.evaluaytor.businessdomain.evaluacion.repositories.EstadoDetalleR
 import com.udla.evaluaytor.businessdomain.evaluacion.repositories.EstadoEvaluacionRepository;
 import com.udla.evaluaytor.businessdomain.evaluacion.repositories.FormularioRepository;
 
+import jakarta.transaction.Transactional;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -203,7 +204,12 @@ public class FormularioImpl implements FormularioService {
     }
 
     @Override
+    @Transactional
     public void deleteFormulario(Long id) {
+        // Eliminar filas dependientes
+        detalleFormularioRepository.deleteByFormularioId(id);
+
+        // Eliminar fila principal
         formularioRepository.deleteById(id);
     }
 
