@@ -11,6 +11,7 @@
 
 	<modules>
         <module>businessdomain</module>
+        <module>infraestructuredomain</module>
     </modules>
 
 	<groupId>com.udla</groupId>
